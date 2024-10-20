@@ -106,10 +106,10 @@ export class LazyList<T> extends HTMLElement {
     //-----------------
     const itemHeight = 400;
     const visibleCount = 4;
-    
+
     // calculating index range of visible items
     const firstIndex = Math.floor(this.#listElement.scrollTop / itemHeight);
-    const lastIndex = Math.min(firstIndex + visibleCount, this.#data.length); // prevention against out-of-range index 
+    const lastIndex = Math.min(firstIndex + visibleCount, this.#data.length); // prevention against out-of-range index
 
     // add items from index range
     for (let i = firstIndex; i < lastIndex; i++) {
@@ -119,7 +119,6 @@ export class LazyList<T> extends HTMLElement {
     // adjust spacer heights
     this.#topOffsetElement.style.height = `${firstIndex * itemHeight}px`;
     this.#bottomOffsetElement.style.height = `${(this.#data.length - lastIndex) * itemHeight}px`;
-
   }
 
   #scrollPositionChanged(topOffset: number) {
