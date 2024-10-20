@@ -42,13 +42,13 @@ export class LazyList<T> extends HTMLElement {
   #data: T[] = [];
 
   // The index of the first visible data item.
-  #visiblePosition: number = 0;
+  //#visiblePosition: number = 0;
 
   // The amount of space that needs to be shown before the first visible item.
-  #topOffset: number = 0;
+  //#topOffset: number = 0;
   #topOffsetElement: HTMLElement;
   // The amount of space that needs to be shown after the last visible item.
-  #bottomOffset: number = 0;
+  //#bottomOffset: number = 0;
   #bottomOffsetElement: HTMLElement;
 
   // The container that stores the spacer elements and the slot where items are inserted.
@@ -75,9 +75,6 @@ export class LazyList<T> extends HTMLElement {
     this.#listElement.onscroll = () => {
       this.#scrollPositionChanged(this.#listElement.scrollTop);
     };
-
-    // Remove this once you are actually showing some data in the list.
-    // this.innerHTML = "<span> Some content </span>"
   }
 
   setData(data: T[]) {
@@ -102,13 +99,31 @@ export class LazyList<T> extends HTMLElement {
     // Show only one item (for debugging, we will extend to more (visible)
     // items later).
     this.innerHTML = "";
-    if (this.#data.length > 0) {
-      this.appendChild(this.#renderFunction(this.#data[0]));
+    // if (this.#data.length > 0) {
+    //   this.appendChild(this.#renderFunction(this.#data[0]));
+    // }
+
+    //-----------------
+    const itemHeight = 400;
+    const visibleCount = 4;
+    
+    // calculating index range of visible items
+    const firstIndex = Math.floor(this.#listElement.scrollTop / itemHeight);
+    const lastIndex = Math.min(firstIndex + visibleCount, this.#data.length); // prevention against out-of-range index 
+
+    // add items from index range
+    for (let i = firstIndex; i < lastIndex; i++) {
+      this.appendChild(this.#renderFunction(this.#data[i]));
     }
+
+    // adjust spacer heights
+    this.#topOffsetElement.style.height = `${firstIndex * itemHeight}px`;
+    this.#bottomOffsetElement.style.height = `${(this.#data.length - lastIndex) * itemHeight}px`;
+
   }
 
   #scrollPositionChanged(topOffset: number) {
-    console.log(topOffset);
+    //console.log(topOffset);
 
     // Update the height of the top offset to match the current scroll position.
     // The effect should be that the content stays visible in one even
@@ -119,5 +134,6 @@ export class LazyList<T> extends HTMLElement {
     // the one we originally observed (i.e. the one to which we are
     // adjusting the offset).
     this.#listElement.scrollTop = topOffset;
+    this.#contentChanged();
   }
 }
